@@ -3,28 +3,20 @@ package amount
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
-func Amount(a string) string {
-	if len(a) >= 3 {
-		firstpart := a[0 : len(a)-2]
-		secondpart := a[len(a)-2:]
-
-		if len(firstpart) > 3 {
-			firstpart = insertDot(firstpart, 3)
-		}
-		a = fmt.Sprintf("%s,%s", firstpart, secondpart)
-
-	} else {
-		if len(a) == 1 {
-			a = fmt.Sprintf("0%s", a)
-		}
-		a = fmt.Sprintf("0,%s", a)
+func Amount(in float64) string {
+	res := strings.Replace(fmt.Sprintf("%.2f", in), ".", ",", 1)
+	if ix := strings.Index(res, ","); ix > 0 {
+		parts := strings.Split(res, ",")
+		parts[0] = insertDots(parts[0], 3) // dot every 3 digits
+		res = strings.Join(parts, ",")
 	}
-	return a
+	return res
 }
 
-func insertDot(s string, n int) string {
+func insertDots(s string, n int) string {
 	s = revertString(s)
 	var buffer bytes.Buffer
 	var n1 = n - 1
